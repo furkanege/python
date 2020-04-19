@@ -1,0 +1,61 @@
+"sudo apt update;sudo apt install apache2;apache2 -version"
+Komut satırını sunucumuza yapıştırarak Apache'yi indirelim ve sunucumuza kurmuş olalım.
+
+Şimdi ise güvenlik duvarımızı konfigüre edelim:
+"sudo ufw app list;sudo ufw allow 'Apache'"
+
+Apache konfigürasyonumuzu yapalım:
+"sudo systemctl status apache2"
+
+mod_wsgi indirelim ve aktif edelim:
+"sudo apt-get install libapache2-mod-wsgi python-dev"
+
+Flask uygulamamızı oluşturalım:
+"cd /var/www;sudo mkdir site;cd site"
+
+Flask'ı sunucumuza kuralım:
+"sudo apt-get install python-pip;sudo pip install Flask"
+
+Dosyalarımızı konuma atalım:
+"/var/www/site"
+
+Tekrardan PuTTY'mize gelelim. Sanal hostumuzu konfigüre edelim ve aktifleştirelim:
+"sudo nano /etc/apache2/sites-available/site.conf"
+Buraya eklenecek kodlar:
+"<VirtualHost *:80>
+		ServerName ip adresiniz
+		ServerAdmin email@adresiniz.com
+		WSGIScriptAlias / /var/www/site/site.wsgi
+		<Directory /var/www/site/site/>
+			Order allow,deny
+			Allow from all
+		</Directory>
+		Alias /static /var/www/site/site/static
+		<Directory /var/www/site/site/static/>
+			Order allow,deny
+			Allow from all
+		</Directory>
+		ErrorLog ${APACHE_LOG_DIR}/error.log
+		LogLevel warn
+		CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>"
+
+"sudo a2ensite site;systemctl reload apache2"
+Kod satırı ile sitemizi Apache'ye tanıtalım ve Apache'yi yenileyelim:
+
+Şimdi ise .wsgi dosyamızı oluşturalım.
+"sudo nano site.wsgi"
+Dosyaya yazılacaklar:
+"import sys
+import logging
+logging.basicConfig(stream=sys.stderr)
+sys.path.insert(0,"/var/www/site/")
+
+from site import app as application
+application.secret_key = 'Gizli bir anahtar bırakabilirsiniz.'"
+
+Son kontrollerimizi yapalım ve Apache'mizi yeniden başlatalım:
+"sudo service apache2 restart"
+
+Ve tarayıcıya sunucunun IP adresini yazarak sitemize ulaşalım:
+x.x.x.x
