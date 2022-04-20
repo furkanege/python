@@ -1,7 +1,5 @@
-# depo-python
-Python ile ilgili çalışmalar.
-Bir selam ile hepsini kullanabilirsiniz. 
-
-blog: furkanege.com.tr/blog
-
--Furkan Ege
+- 👋 Hi, I’m @furkanege
+- 👀 I’m interested in python and ai
+- 🌱 I’m currently learning ai
+- 💞️ I’m looking to collaborate on ...
+- 📫 How to reach me ...
